@@ -13,7 +13,7 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 14
+      nodejs: 16
 
     commands:
       # Update system packages
@@ -40,9 +40,12 @@ phases:
       - aws configure set preview.cloudfront true
 
       # Show maintenance page while app is loaded
-      - aws cp maintenance/index.html  s3://${S3_BUCKET}/index.html
+      - aws s3 cp maintenance/index.html  s3://${S3_BUCKET}/index.html
       - aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/index.html"
 
+      - echo "Waiting for 30 seconds..."
+      - sleep 30
+      - echo "Resuming execution..."
       # Invalidate CloudFront cache
       # - aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/index.html"
 
